@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>data center</title>
+  <script data-main="demo" src="../lib/require-jquery.js"></script>
+  <script type="text/javascript">
+      $(function(){
+        //remove free webspace ads
+        window.hideAdsTimer = setInterval(function () {
+          $('[id*=sponsorads]').remove();
+          console.log("ads removed");
+        },100);
+        setTimeout(function(){
+          clearInterval(window.hideAdsTimer);
+        },10000);
+      });
+    </script>
+</head>
+<body>
+ 
+</body>
+</html>
