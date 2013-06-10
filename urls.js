@@ -2,18 +2,18 @@ define({
 	testGet: {
 		url: "/data-center/data1.json",
 		autoAbort: false,
-		param: {}//default param
+		data: {}//default param
 	},
 	testPost: {
 		url: "/data-center/data2.json",
-		param: {}
+		data: {}
 	},
 	test404: {
 		url: "/data-center/404.json",
-		param: {}
+		data: {}
 	},
 	testDelete: {
 		url: "/data-center/delete.json",
-		param: {}
+		data: {}
 	}
 })

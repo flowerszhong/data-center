@@ -5,86 +5,96 @@ define(["jquery", "dataCenter/urls"], function($, urls) {
 	};
 
 	DataCenter.prototype = {
-		get: function(requestName, urlParam, callbackParam, callback, errorCallback,ajaxConfig) {
-			return this.load(requestName, urlParam, ajaxConfig, callbackParam, callback, errorCallback);
+		get: function(url, done, fail) {
+			var param = this.buildParam(url);
+			return this.load(param, done, fail);
 		},
-		post: function(requestName, urlParam, callbackParam, callback, errorCallback,ajaxConfig) {
-			if(ajaxConfig){
-				ajaxConfig['type'] = "post";
-			}else{
-				ajaxConfig = {'type':"post"}
-			}
-			return this.load(requestName, urlParam, ajaxConfig, callbackParam, callback, errorCallback);
+		post: function(url, done, fail) {
+			var type = "post",
+				param = this.buildParam(url,type);
+			return this.load(param, done, fail);
 		},
-		load: function(requestName, urlParam, ajaxConfig, callbackParam, callback, errorCallback) {
+
+		load: function(param, done, fail) {
 			var self = this;
-			var requestItem = this.getUrlParam(requestName, urlParam);
+			var requestName = param.requestName;
 			if (this._XHRs[requestName] && this._XHRs[requestName].readystate != 4 && requestItem.autoAbort !== false) {
 				this._XHRs[requestName].abort();
 				delete this._XHRs[requestName];
 			}
 
-			var dataUrl = requestItem.url;
-			var _ajaxConfig = { //default config
-				url: dataUrl,
-				type: "get",
-				dataType: "json",
-				timeout: 10*1000,
-				error: function(jqXHR, textStatus, error) {
-					delete self._XHRs[requestName];
-					if (jqXHR.status === 404) {
-						console.log(error);
-					} else if (jqXHR.status == 500) {
-						console.log('Internal Server Error [500].');
-					} else if (textStatus === 'parsererror') {
-						console.log('Requested JSON parse failed.');
-					} else if (error === 'timeout') {
-						console.log(error);
-					} else if (error === 'abort') {
-						console.log('Ajax request aborted.');
-					} else {
-						console.log('Uncaught Error.\n' + jqXHR.responseText);
-					}
-					if (errorCallback) {
-						errorCallback(error);
-					}
-
-				}
-			};
-			if (urlParam) {
-				_ajaxConfig.data = urlParam;
-			}
-			if (ajaxConfig) {
-				$.extend(true, _ajaxConfig, ajaxConfig);
-			}
-			var xhr = this._XHRs[requestName] = $.ajax(_ajaxConfig).done(function(data) {
+			var xhr = this._XHRs[requestName] = $.ajax(param).done(function(data) {
 				delete self._XHRs[requestName];
 				if (data != null) {
 					if (data.State == false) {
 						//code goes here
 					} else {
-						callback(data, callbackParam);
+						done(data, callbackParam);
 					}
 				}
-			}
+			}).fail(function(jqXHR, textStatus, error) {
+				delete self._XHRs[requestName];
+				if (jqXHR.status === 404) {
+					console.log(error);
+				} else if (jqXHR.status == 500) {
+					console.log('Internal Server Error [500].');
+				} else if (textStatus === 'parsererror') {
+					console.log('Requested JSON parse failed.');
+				} else if (error === 'timeout') {
+					console.log(error);
+				} else if (error === 'abort') {
+					console.log('Ajax request aborted.');
+				} else {
+					console.log('Uncaught Error.\n' + jqXHR.responseText);
+				}
+				if (fail) {
+					fail(error);
+				}
 
-			);
+			})
 
 			return xhr;
 		},
 
-		getUrlParam: function(requestName, urlParam) {
-			var requestItem = this.urls[requestName];
-			if (window.location.hostname == "flowerszhong.shop.co") {
-				if(requestItem.url.indexOf('/demo-project') == '-1'){
-					requestItem.url = "/demo-project" + requestItem.url;
+		buildParam : function (url,type) {
+			var defaultConfig = { 
+				type: type || "get",
+				dataType: "json",
+				timeout: 10*1000,
+				data: null
+			};
+
+			var _param = this._getUrlParam(url),
+				param = $.extend({},defaultConfig,_param);
+
+			return param;
+
+		},
+		_getUrlParam : function (_url) {
+			var param;
+			if(typeof _url == "string"){
+				param = this.urls[_url];
+				this._confirm(param);
+				param.requestName = _url;
+			}else{
+				if(_url.url){
+					param = this.urls[_url.url];
+					this._confirm(param);
+					param.requestName = _url.url;
+					if(_url.data){
+						param.data = $.extend({},param.data,_url.data);
+					}
+					if(_url.RESTfulKeys && _url.RESTfulKeys.length){
+						param.url = param.url + _url.RESTfulKeys.join('/') + "/";
+					}
 				}
 			}
-			if (urlParam) {
-				$.extend(true, requestItem.param, urlParam);
-
+			return param;
+		},
+		_confirm : function (param) {
+			if(typeof param == "undefined"){
+				throw new Error("no url match !!!");
 			}
-			return requestItem;
 		}
 
 	};
