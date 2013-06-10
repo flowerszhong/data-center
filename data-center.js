@@ -5,6 +5,13 @@ define(["jquery", "dataCenter/urls"], function($, urls) {
 	};
 
 	DataCenter.prototype = {
+		/**
+		 * [ get|post ]
+		 * @param  {string|object}  url   [ajax config]
+		 * @param  {Function} 		done  [success callback]
+		 * @param  {Function}       fail  [fail callback]
+		 * @return {object}        		  [xhr]	
+		 */
 		get: function(url, done, fail) {
 			var param = this.buildParam(url);
 			return this.load(param, done, fail);
@@ -15,6 +22,13 @@ define(["jquery", "dataCenter/urls"], function($, urls) {
 			return this.load(param, done, fail);
 		},
 
+		/**
+		 * [ load ]
+		 * @param  {object}     param [ajax config]
+		 * @param  {Function}   done  [success callback]
+		 * @param  {function}   fail  [fail callback]
+		 * @return {object}           [xhr]
+		 */
 		load: function(param, done, fail) {
 			var self = this;
 			var requestName = param.requestName;
@@ -29,7 +43,7 @@ define(["jquery", "dataCenter/urls"], function($, urls) {
 					if (data.State == false) {
 						//code goes here
 					} else {
-						done(data, callbackParam);
+						done(data, param.callbackParam);
 					}
 				}
 			}).fail(function(jqXHR, textStatus, error) {
