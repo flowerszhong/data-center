@@ -6,11 +6,11 @@ define(["jquery", "dataCenter/urls"], function($, urls) {
 
 	DataCenter.prototype = {
 		/**
-		 * [ get|post ]
+		 * [ get|post|delete|update|put ]
 		 * @param  {string|object}  url   [ajax config]
 		 * @param  {Function} 		done  [success callback]
 		 * @param  {Function}       fail  [fail callback]
-		 * @return {object}        		  [xhr]	
+		 * @return {object}        		  [xhr]
 		 */
 		get: function(url, done, fail) {
 			var param = this.buildParam(url);
@@ -18,7 +18,22 @@ define(["jquery", "dataCenter/urls"], function($, urls) {
 		},
 		post: function(url, done, fail) {
 			var type = "post",
-				param = this.buildParam(url,type);
+				param = this.buildParam(url, type);
+			return this.load(param, done, fail);
+		},
+		delete: function(url, done, fail) {
+			var type = "delete",
+				param = this.buildParam(url, type);
+			return this.load(param, done, fail);
+		},
+		put: function(url, done, fail) {
+			var type = "put",
+				param = this.buildParam(url, type);
+			return this.load(param, done, fail);
+		},
+		update: function(url, done, fail) {
+			var type = "update",
+				param = this.buildParam(url, type);
 			return this.load(param, done, fail);
 		},
 
@@ -32,7 +47,7 @@ define(["jquery", "dataCenter/urls"], function($, urls) {
 		load: function(param, done, fail) {
 			var self = this;
 			var requestName = param.requestName;
-			if (this._XHRs[requestName] && this._XHRs[requestName].readystate != 4 && requestItem.autoAbort !== false) {
+			if (this._XHRs[requestName] && this._XHRs[requestName].readystate != 4 && param.autoAbort !== false) {
 				this._XHRs[requestName].abort();
 				delete this._XHRs[requestName];
 			}
@@ -70,43 +85,45 @@ define(["jquery", "dataCenter/urls"], function($, urls) {
 			return xhr;
 		},
 
-		buildParam : function (url,type) {
-			var defaultConfig = { 
+		buildParam: function(url, type) {
+			var defaultConfig = {
 				type: type || "get",
 				dataType: "json",
-				timeout: 10*1000,
+				timeout: 10 * 1000,
 				data: null
 			};
 
 			var _param = this._getUrlParam(url),
-				param = $.extend({},defaultConfig,_param);
+				param = $.extend({}, defaultConfig, _param);
+
+			console.log(param);
 
 			return param;
 
 		},
-		_getUrlParam : function (_url) {
+		_getUrlParam: function(_url) {
 			var param;
-			if(typeof _url == "string"){
+			if (typeof _url == "string") {
 				param = this.urls[_url];
 				this._confirm(param);
 				param.requestName = _url;
-			}else{
-				if(_url.url){
+			} else {
+				if (_url.url) {
 					param = this.urls[_url.url];
 					this._confirm(param);
 					param.requestName = _url.url;
-					if(_url.data){
-						param.data = $.extend({},param.data,_url.data);
+					if (_url.data) {
+						param.data = $.extend({}, param.data, _url.data);
 					}
-					if(_url.RESTfulKeys && _url.RESTfulKeys.length){
-						param.url = param.url + _url.RESTfulKeys.join('/') + "/";
+					if (_url.RESTfulKeys && _url.RESTfulKeys.length) {
+						param.url = param.url + _url.RESTfulKeys.join('/');
 					}
 				}
 			}
 			return param;
 		},
-		_confirm : function (param) {
-			if(typeof param == "undefined"){
+		_confirm: function(param) {
+			if (typeof param == "undefined") {
 				throw new Error("no url match !!!");
 			}
 		}

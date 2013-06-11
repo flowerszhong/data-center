@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>data center</title>
-  <script data-main="demo" src="../lib/require-jquery.js"></script>
-  <script type="text/javascript">
+  <script data-main="demo" src="require-jquery.js"></script>
+  <!--<script type="text/javascript">
       $(function(){
         //remove free webspace ads
         window.hideAdsTimer = setInterval(function () {
@@ -15,9 +15,74 @@
           clearInterval(window.hideAdsTimer);
         },10000);
       });
-    </script>
+    </script>-->
+    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+    <style>
+      input{
+        width: 80px;
+      }
+    </style>
 </head>
 <body>
- 
+  <table class="table table-bordered">
+    <caption></caption>
+    <thead>
+      <tr>
+        <th>field name</th>
+        <th>value</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>url:</td>
+        <td>
+          <select name="" id="urls">
+            <option value="url1">url1</option>
+            <option value="url2">url2</option>
+            <option value="url3">url3</option>
+            <option value="url4">url4</option>
+            <option value="url5">url5</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td>data:</td>
+        <td>
+          <input type="text" name="data1" class="data" id="data1">
+          <input type="text" name="data2" class="data" id="data2">
+          <input type="text" name="data3" class="data" id="data3">
+          <input type="text" name="data4" class="data" id="data4">
+          <input type="text" name="data5" class="data" id="data5"></td>
+      </tr>
+      <tr>
+        <td>RESTfulKeys :</td>
+        <td>
+          <input type="text" name="key1" id="key1"  class="key">
+          <input type="text" name="key2" id="key2" class="key">
+          <input type="text" name="key3" id="key3" class="key">
+          <input type="text" name="key4" id="key4" class="key">
+          <input type="text" name="key5" id="key5" class="key"></td>
+      </tr>
+      <tr>
+        <td>Method :</td>
+        <td>
+          <select name="" id="method">
+            <option value="get">Get</option>
+            <option value="post">Post</option>
+            <option value="put">Put</option>
+            <option value="update">Update</option>
+            <option value="delete">Delete</option>
+          </select>
+        </td>
+      </tr>
+    </tbody>
+    <footer>
+      <tr>
+        <td></td>
+        <td><input type="button" value="Send" id="send" class="btn btn-large"></td>
+      </tr>
+    </footer>
+  </table>
+
 </body>
 </html>
